@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  payment-service:
+    build: .
+    container_name: tukotomi-payment
+    ports:
+      - "8088:8088"
+    env_file:
+      - .env  # Aponta para o arquivo oculto onde estão suas credenciais
+    environment:
+      # host.docker.internal faz o container enxergar o localhost da sua máquina (porta 8080)
+      - API_CORE_URL=http://host.docker.internal:8080
+
+      # Puxa as variáveis diretamente do arquivo .env
+      - API_SPRING_KEY=${API_SPRING_KEY}
+      - INFINITY_PAY_HANDLE=${INFINITY_PAY_HANDLE:-alexsander-torres}
+
+    # Reinicia o serviço automaticamente caso ele caia, exceto se você parar manualmente
+    restart: unless-stopped

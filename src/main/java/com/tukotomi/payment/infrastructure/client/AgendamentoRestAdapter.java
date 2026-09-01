@@ -12,21 +12,20 @@ import java.util.Map;
 public class AgendamentoRestAdapter implements AgendamentoClientPort {
 
     private final RestClient restClient;
-    private final String springApiKey;
 
-    public AgendamentoRestAdapter(RestClient.Builder restClientBuilder,
-                                  @Value("${spring.api.key}") String springApiKey,
+    public AgendamentoRestAdapter(@Value("${spring.api.key}") String springApiKey,
                                   @Value("${api.core.url:http://localhost:8080}") String coreUrl) {
-        // Configura a URL para o backend core
-        this.restClient = restClientBuilder.baseUrl(coreUrl).build();
-        this.springApiKey = springApiKey;
+        // Configuramos a URL base e o cabeçalho padrão UMA ÚNICA VEZ
+        this.restClient = RestClient.builder()
+                .baseUrl(coreUrl)
+                .defaultHeader("API-KEY", springApiKey) // A mágica acontece aqui!
+                .build();
     }
 
     @Override
     public Agendamento findById(String id) {
         return restClient.get()
                 .uri("/agendamentos/{id}", id)
-                .header("API-KEY", springApiKey)
                 .retrieve()
                 .body(Agendamento.class);
     }
@@ -34,8 +33,7 @@ public class AgendamentoRestAdapter implements AgendamentoClientPort {
     @Override
     public void updateStatus(String id, String status) {
         restClient.patch()
-                .uri("/agendamentos/{id}/pagamento", id) // Ajustar minha rota dps
-                .header("API-KEY", springApiKey)
+                .uri("/agendamentos/{id}/pagamento", id)
                 .body(Map.of("status", status))
                 .retrieve()
                 .toBodilessEntity();

@@ -14,42 +14,38 @@ import java.util.Map;
 public class InfinityPayAdapter implements PaymentGatewayPort {
 
     private final RestClient restClient;
-    private final String apiKey;
+    private final String merchantHandle;
 
-    public InfinityPayAdapter(RestClient.Builder restClientBuilder,
-                              @Value("${infinity.api.key:chave_aqui}") String apiKey) { //colocar a chave
-        // Configura a URL da Infinity Pay
-        this.restClient = restClientBuilder.baseUrl("https://api.infinitepay.io").build();
-        this.apiKey = apiKey;
+    public InfinityPayAdapter(@Value("${infinity.pay.handle}") String merchantHandle) {
+        this.restClient = RestClient.builder().baseUrl("https://api.infinitepay.io").build();
+        this.merchantHandle = merchantHandle;
     }
 
     @Override
     public CheckoutInfo generateCheckoutLink(Agendamento agendamento) {
-        // Monta o payload
+        // Montamos o payload usando o seu handle
         Map<String, Object> payload = Map.of(
-                "handle", "alexsander-torres",
+                "handle", merchantHandle,
                 "order_nsu", agendamento.id(),
                 "items", List.of(Map.of(
                         "quantity", 1,
-                        "price", 10000,
+                        "price", 10000, // Lembrando que na Infinity Pay geralmente o valor é em centavos (10000 = R$ 100,00)
                         "description", "Serviço Renata Tukotomi"
                 )),
                 "customer", Map.of(
-                        "name", "Alex",
-                        "email", "Alex@gmail.com",
+                        "name", "Cliente Tukotomi",
+                        "email", "cliente@tukotomi.com",
                         "phone_number", "11999999999"
                 )
         );
 
-        // POST e mapeia a resposta
+        // Disparamos a requisição sem o .header("Authorization")
         Map response = restClient.post()
                 .uri("/invoices/public/checkout/links")
-                .header("Authorization", "Bearer " + apiKey)
                 .body(payload)
                 .retrieve()
                 .body(Map.class);
 
-        // Retorna model de domínio com a URL extraída
         return new CheckoutInfo(agendamento.id(), (String) response.get("url"));
     }
 }
