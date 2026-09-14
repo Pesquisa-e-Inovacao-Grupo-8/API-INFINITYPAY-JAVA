@@ -14,7 +14,7 @@ public class AgendamentoRestAdapter implements AgendamentoClientPort {
     private final RestClient restClient;
 
     public AgendamentoRestAdapter(@Value("${spring.api.key}") String springApiKey,
-                                  @Value("${api.core.url:http://localhost:8080}") String coreUrl) {
+                                  @Value("${api.core.url:http://back-end-java:8080}") String coreUrl) {
         // Configuramos a URL base e o cabeçalho padrão UMA ÚNICA VEZ
         this.restClient = RestClient.builder()
                 .baseUrl(coreUrl)
