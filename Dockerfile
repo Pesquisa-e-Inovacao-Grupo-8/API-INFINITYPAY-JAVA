@@ -1,23 +1,23 @@
 # 1: Build (Compilação)
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS builder
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
 WORKDIR /app
 
-# Copia apenas o pom.xml primeiro para baixar as dependências (otimiza o cache do Docker)
+# Copia o pom.xml e baixa as dependências
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn dependency:go-offline -B
 
-# Copia o código fonte e compila
+# Copia o código fonte e gera o pacote (com logs de erro ativados '-e')
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn package -DskipTests -e
 
-# 2: Run (Execucao)
-FROM eclipse-temurin:17-jre-alpine
+# 2: Run (Execução)
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Copia o arquivo .jar
+# Copia o arquivo .jar gerado na etapa anterior
 COPY --from=builder /app/target/*.jar app.jar
 
-# Expoe a porta 8088
+# Expõe a porta 8088
 EXPOSE 8088
 
 # Inicia a aplicação
