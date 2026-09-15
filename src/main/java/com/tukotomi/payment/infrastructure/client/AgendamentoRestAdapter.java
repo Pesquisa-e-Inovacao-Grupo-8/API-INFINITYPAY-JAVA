@@ -14,7 +14,7 @@ public class AgendamentoRestAdapter implements AgendamentoClientPort {
     private final RestClient restClient;
 
     public AgendamentoRestAdapter(@Value("${spring.api.key}") String springApiKey,
-                                  @Value("${api.core.url:https://infinity-pay.renatahtokutomi:8080}") String coreUrl) {
+                                  @Value("${api.core.url:http://localhost:8080}") String coreUrl) {
         // Configuramos a URL base e o cabeçalho padrão UMA ÚNICA VEZ
         this.restClient = RestClient.builder()
                 .baseUrl(coreUrl)
@@ -32,8 +32,8 @@ public class AgendamentoRestAdapter implements AgendamentoClientPort {
 
     @Override
     public void updateStatus(String id, String status) {
-        restClient.patch()
-                .uri("/agendamentos/{id}/pagamento", id)
+        restClient.put()
+            .uri("/agendamentos/{id}", id)
                 .body(Map.of("status", status))
                 .retrieve()
                 .toBodilessEntity();
