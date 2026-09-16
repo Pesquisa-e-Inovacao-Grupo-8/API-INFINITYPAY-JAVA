@@ -8,7 +8,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/webhook")
-@CrossOrigin(origins = "*")
 public class WebhookController {
 
     private final ProcessWebhookUseCase processWebhookUseCase;
