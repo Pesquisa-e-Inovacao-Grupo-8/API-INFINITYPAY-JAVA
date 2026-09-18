@@ -32,8 +32,8 @@ public class AgendamentoRestAdapter implements AgendamentoClientPort {
 
     @Override
     public void updateStatus(String id, String status) {
-        restClient.patch()
-                .uri("/agendamentos/{id}/pagamento", id)
+        restClient.put()
+            .uri("/agendamentos/{id}", id)
                 .body(Map.of("status", status))
                 .retrieve()
                 .toBodilessEntity();
