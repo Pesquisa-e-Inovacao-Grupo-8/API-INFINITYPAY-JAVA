@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/flask-infinity-pay")
+@RequestMapping("/infinity-pay")
+@CrossOrigin(origins = "*") // Habilita o CORS para o Frontend
 public class CheckoutController {
 
     private final CreateCheckoutUseCase createCheckoutUseCase;
