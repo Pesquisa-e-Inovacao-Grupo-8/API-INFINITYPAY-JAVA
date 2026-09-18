@@ -32,7 +32,8 @@ class WebhookServiceTest {
         // 1. ARRANGE
         String orderNsu = "123";
         Map<String, Object> payload = Map.of("order_nsu", orderNsu);
-        Agendamento agendamentoMock = new Agendamento(orderNsu, "PENDENTE");
+        Agendamento agendamentoMock = new Agendamento(
+            orderNsu, "PENDENTE", 0.0, null, null, null, null);
 
         // Ensinamos o dublê a encontrar o agendamento
         when(agendamentoPort.findById(orderNsu)).thenReturn(agendamentoMock);

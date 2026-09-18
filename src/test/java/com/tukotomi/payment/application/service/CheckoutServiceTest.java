@@ -34,7 +34,8 @@ class CheckoutServiceTest {
     void deveGerarCheckoutComSucesso() {
         // 1. ARRANGE (Preparação)
         String idTeste = "123";
-        Agendamento agendamentoMock = new Agendamento(idTeste, "PENDENTE");
+        Agendamento agendamentoMock = new Agendamento(
+            idTeste, "PENDENTE", 0.0, null, null, null, null);
         CheckoutInfo checkoutEsperado = new CheckoutInfo(idTeste, "https://link-falso.com");
 
         // Ensinamos o dublê: "Quando pedirem o ID 123, devolva o agendamentoMock"
