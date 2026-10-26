@@ -1,8 +1,25 @@
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"    # porta AMQP (usada pela aplicação)
+      - "15672:15672"  # painel de administração web
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - shared-network
+
   backend:
     image: imagestreampi/api-infinitypay-java-prd:4
     container_name: api-infinity-pay
     restart: unless-stopped
+    depends_on:
+      - rabbitmq
 
     env_file:
       - .env
@@ -12,11 +29,18 @@ services:
       INFINITY_PAY_HANDLE: ${INFINITY_PAY_HANDLE}
       API_CORE_URL: ${API_CORE_URL}
       INFINITY_PAY_WEBHOOK_URL: ${INFINITY_PAY_WEBHOOK_URL}
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER:-guest}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASS:-guest}
 
     ports:
       - "8088:8088"
     networks:
       - shared-network
+
+volumes:
+  rabbitmq_data:
 
 networks:
   shared-network:
